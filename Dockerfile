@@ -73,9 +73,25 @@ WORKDIR /
 # Install Python runtime dependencies for the handler
 RUN uv pip install runpod requests websocket-client
 
+# Install ComfyUI-Manager if not already present (to avoid conflicts with snapshot)
+RUN cd /comfyui/custom_nodes && \
+    if [ ! -d "ComfyUI-Manager" ]; then \
+        git clone https://github.com/ltdrdata/ComfyUI-Manager.git && \
+        cd ComfyUI-Manager && \
+        uv pip install -r requirements.txt || true; \
+    fi
+
 # Add application code and scripts
 ADD src/start.sh handler.py test_input.json ./
 RUN chmod +x /start.sh
+
+# Copy snapshot file and restore nodes
+COPY snapshot.json /tmp/snapshot.json
+RUN cd /comfyui && \
+    if [ -f "/tmp/snapshot.json" ]; then \
+        python custom_nodes/ComfyUI-Manager/cm-cli.py restore /tmp/snapshot.json || \
+        echo "Snapshot restore failed, continuing..."; \
+    fi
 
 # Add script to install custom nodes
 COPY scripts/comfy-node-install.sh /usr/local/bin/comfy-node-install
