@@ -21,11 +21,13 @@ runpod_worker_comfy:
   grounding-dino: models/grounding-dino/
   hypernetworks: models/hypernetworks/
   insightface: models/insightface/
+  intrinsic_loras: models/intrinsic_loras/
   ipadapter: models/ipadapter/
   liveportrait: models/liveportrait/
   onnx: models/onnx/
   photomaker: models/photomaker/
   pulid: models/pulid/
+  rembg: models/rembg/
   sam2: models/sam2/
   sams: models/sams/
   sonic: models/sonic/
