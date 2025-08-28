@@ -82,17 +82,16 @@ RUN cd /comfyui/custom_nodes && \
     fi
 
 # Add application code and scripts
-ADD src/start.sh src/restore_snapshot.sh handler.py test_input.json ./
-RUN chmod +x /start.sh
-RUN chmod +x /restore_snapshot.sh
+ADD src/restore_snapshot.sh handler.py test_input.json ./
 
 # Copy snapshot file and restore nodes
 COPY snapshot.json /tmp/snapshot.json
+RUN chmod +x /restore_snapshot.sh
 RUN ./restore_snapshot.sh
 
 # Add script to install custom nodes
-COPY scripts/comfy-node-install.sh /usr/local/bin/comfy-node-install
-RUN chmod +x /usr/local/bin/comfy-node-install
+# COPY scripts/comfy-node-install.sh /usr/local/bin/comfy-node-install
+# RUN chmod +x /usr/local/bin/comfy-node-install
 
 # Prevent pip from asking for confirmation during uninstall steps in custom nodes
 ENV PIP_NO_INPUT=1
@@ -102,6 +101,8 @@ COPY scripts/comfy-manager-set-mode.sh /usr/local/bin/comfy-manager-set-mode
 RUN chmod +x /usr/local/bin/comfy-manager-set-mode
 
 # Set the default command to run when starting the container
+ADD src/start.sh ./
+RUN chmod +x /start.sh
 CMD ["/start.sh"]
 
 # Stage 3: Final image

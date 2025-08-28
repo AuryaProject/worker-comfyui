@@ -318,13 +318,14 @@ def get_available_models():
         return {}
 
 
-def queue_workflow(workflow, client_id):
+def queue_workflow(workflow, client_id, job_id=None):
     """
     Queue a workflow to be processed by ComfyUI
 
     Args:
         workflow (dict): A dictionary containing the workflow to be processed
         client_id (str): The client ID for the websocket connection
+        job_id (str, optional): The job ID to use as prompt_id in ComfyUI
 
     Returns:
         dict: The JSON response from ComfyUI after processing the workflow
@@ -334,6 +335,10 @@ def queue_workflow(workflow, client_id):
     """
     # Include client_id in the prompt payload
     payload = {"prompt": workflow, "client_id": client_id}
+    
+    # If job_id is provided, use it as the prompt_id for ComfyUI
+    if job_id:
+        payload["prompt_id"] = job_id
     data = json.dumps(payload).encode("utf-8")
 
     # Use requests for consistency and timeout
@@ -533,7 +538,7 @@ def handler(job):
 
         # Queue the workflow
         try:
-            queued_workflow = queue_workflow(workflow, client_id)
+            queued_workflow = queue_workflow(workflow, client_id, job_id)
             prompt_id = queued_workflow.get("prompt_id")
             if not prompt_id:
                 raise ValueError(
