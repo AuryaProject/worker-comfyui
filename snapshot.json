@@ -2,7 +2,7 @@
   "comfyui": "7139d6d93fc7b5481a69b687080bd36f7b531c46",
   "git_custom_nodes": {
     "https://github.com/shedyhs/better-save-image": {
-      "hash": "9ca764e60bd6474cd45ff9802487333cb9d1ec32",
+      "hash": "deab2c0406187ce7dd6ae7a75092eb9f3e0689f1",
       "disabled": false
     },
     "https://github.com/evanspearman/ComfyMath": {
