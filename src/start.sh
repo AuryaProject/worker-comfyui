@@ -127,6 +127,14 @@ export LD_PRELOAD="${TCMALLOC}"
 # Ensure ComfyUI-Manager runs in offline network mode inside the container
 comfy-manager-set-mode offline || echo "worker-comfyui - Could not set ComfyUI-Manager network_mode" >&2
 
+# Limpar TODOS os caches Python antes de iniciar
+echo "worker-comfyui: Clearing Python cache..."
+find /comfyui -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+find /comfyui -name "*.pyc" -delete 2>/dev/null || true
+
+# IMPORTANTE: Limpar o cache do Python em sys.modules
+python3 -c "import sys; sys.modules.clear()" 2>/dev/null || true
+
 echo "worker-comfyui: Starting ComfyUI"
 
 # Allow operators to tweak verbosity; default is DEBUG.
@@ -134,12 +142,12 @@ echo "worker-comfyui: Starting ComfyUI"
 
 # Serve the API and don't shutdown the container
 if [ "$SERVE_API_LOCALLY" == "true" ]; then
-    python -u /comfyui/main.py --disable-auto-launch --disable-metadata --listen --verbose "${COMFY_LOG_LEVEL}" --log-stdout &
+    python -u /comfyui/main.py --disable-auto-launch --disable-metadata --listen --verbose "${COMFY_LOG_LEVEL}" --log-stdout --extra-model-paths-config /comfyui/extra_model_paths.yaml &
 
     echo "worker-comfyui: Starting RunPod Handler"
     python -u /handler.py --rp_serve_api --rp_api_host=0.0.0.0
 else
-    python -u /comfyui/main.py --disable-auto-launch --disable-metadata --verbose "${COMFY_LOG_LEVEL}" --log-stdout &
+    python -u /comfyui/main.py --disable-auto-launch --disable-metadata --verbose "${COMFY_LOG_LEVEL}" --log-stdout --extra-model-paths-config /comfyui/extra_model_paths.yaml &
 
     echo "worker-comfyui: Starting RunPod Handler"
     python -u /handler.py
