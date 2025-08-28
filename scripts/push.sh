@@ -1,6 +1,6 @@
 DOCKER_USERNAME="shedyhs"
 IMAGE_NAME="worker-comfyui-custom"
-VERSION="1.0.0"
+VERSION="1.0.1"
 
 # Cores
 GREEN='\033[0;32m'
@@ -21,11 +21,11 @@ fi
 
 # Push da versão específica
 echo -e "${YELLOW}Push: ${DOCKER_USERNAME}/${IMAGE_NAME}:${VERSION}${NC}"
-docker push ${DOCKER_USERNAME}/${IMAGE_NAME}:${VERSION}
+docker push ${DOCKER_USERNAME}/${IMAGE_NAME}_${VERSION}:latest
 
 # Push da tag latest
-echo -e "${YELLOW}Push: ${DOCKER_USERNAME}/${IMAGE_NAME}:latest${NC}"
-docker push ${DOCKER_USERNAME}/${IMAGE_NAME}:latest
+echo -e "${YELLOW}Push: ${DOCKER_USERNAME}/${IMAGE_NAME}:${VERSION}${NC}"
+docker push ${DOCKER_USERNAME}/${IMAGE_NAME}:${VERSION}
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✅ Push concluído com sucesso!${NC}"
