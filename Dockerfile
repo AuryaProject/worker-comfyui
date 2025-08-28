@@ -82,16 +82,13 @@ RUN cd /comfyui/custom_nodes && \
     fi
 
 # Add application code and scripts
-ADD src/start.sh handler.py test_input.json ./
+ADD src/start.sh src/restore_snapshot.sh handler.py test_input.json ./
 RUN chmod +x /start.sh
+RUN chmod +x /restore_snapshot.sh
 
 # Copy snapshot file and restore nodes
 COPY snapshot.json /tmp/snapshot.json
-RUN cd /comfyui && \
-    if [ -f "/tmp/snapshot.json" ]; then \
-        python custom_nodes/ComfyUI-Manager/cm-cli.py restore /tmp/snapshot.json || \
-        echo "Snapshot restore failed, continuing..."; \
-    fi
+RUN ./restore_snapshot.sh
 
 # Add script to install custom nodes
 COPY scripts/comfy-node-install.sh /usr/local/bin/comfy-node-install
